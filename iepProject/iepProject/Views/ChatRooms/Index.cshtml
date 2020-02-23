@@ -1,0 +1,70 @@
+﻿@model IEnumerable<iepProject.Models.ChatRoom>
+
+@{
+    ViewBag.Title = "Index";
+    var inChatRooms = ViewBag.inChatRooms as List<Guid>;
+    var techSupportCnt = ViewBag.techSupportCnt as Dictionary<Guid, int>;
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Creator.FirstName)
+        </th>
+        <th>Time Created</th>
+        <th>Tech Cnt</th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+<tr>
+    <td>
+        @Html.DisplayFor(modelItem => item.Creator.FirstName)
+    </td>
+    <td>
+        @item.TimeCreated
+    </td>
+    <td>
+        @techSupportCnt[item.Id]
+    </td>
+
+ 
+    <td>
+
+        @if (inChatRooms.Contains(item.Id))
+        {
+
+            if ((int)Session["role"] != 1)
+            {
+                @Html.ActionLink("Leave", "../InChatRooms/Delete", new { user = (int)Session["userId"], room = item.Id });
+                @: |
+                @Html.ActionLink("Details", "Details", new { id = item.Id })
+                @: |
+            }
+            else if ((int)Session["userId"] == item.CreatorID)
+            {
+                @Html.ActionLink("Details", "Details", new { id = item.Id })
+                @: |
+            }
+        }
+        else
+        {
+            @Html.ActionLink("Join Group", "../InChatRooms/Create", new { id = item.Id });
+            @: |
+        }
+
+
+
+
+        @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+
+    </td>
+</tr>
+}
+
+</table>

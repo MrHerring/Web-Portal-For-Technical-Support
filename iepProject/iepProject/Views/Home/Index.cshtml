@@ -1,0 +1,259 @@
+﻿@model IEnumerable<iepProject.Models.Question>
+
+@{
+    ViewBag.Title = "Home";
+    var listOfCat = ViewBag.Categories as List<iepProject.Models.Category>;
+}
+
+
+@section scripts{
+    <script src="https://www.paypal.com/sdk/js?client-id=ASyeG4ju1BMd2GnKTsmmyX-oahCFHmOW-fMdHCFKrRx-e4y3oJMc_HBFnb25UOlOcxRAGBd7PUNTN9rm">
+    </script>
+
+    <script>
+        paypal.Buttons({
+            createOrder: function (data, actions) {
+                // Set up the transaction
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: {
+                            value: '@iepProject.PayPal.GetOrderClass.SilverPrice'
+                        }
+                    }]
+                });
+            },
+            onApprove: function (data, actions) {
+                return actions.order.capture().then(function (details) {
+                    alert('Transaction completed by ' + details.payer.name.given_name);
+                    // Call your server to save the transaction
+                    return fetch('/Home/PaypalTransactionComplete', {
+                        method: 'post',
+                        headers: {
+                            'content-type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            orderID: data.orderID
+                        })
+                    });
+                });
+            }
+
+        }).render('#paypal-button-container-silver');
+
+        paypal.Buttons({
+            createOrder: function (data, actions) {
+                // Set up the transaction
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: {
+                            value: '@iepProject.PayPal.GetOrderClass.GoldPrice'
+                        }
+                    }]
+                });
+            },
+            onApprove: function (data, actions) {
+                return actions.order.capture().then(function (details) {
+                    alert('Transaction completed by ' + details.payer.name.given_name);
+                    // Call your server to save the transaction
+                    return fetch('/Home/PaypalTransactionComplete', {
+                        method: 'post',
+                        headers: {
+                            'content-type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            orderID: data.orderID
+                        })
+                    });
+                });
+            }
+
+        }).render('#paypal-button-container-gold');
+
+        paypal.Buttons({
+            createOrder: function (data, actions) {
+                // Set up the transaction
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: {
+                            value: '@iepProject.PayPal.GetOrderClass.PlatinumPrice'
+                        }
+                    }]
+                });
+            },
+            onApprove: function (data, actions) {
+                return actions.order.capture().then(function (details) {
+                    alert('Transaction completed by ' + details.payer.name.given_name);
+                    // Call your server to save the transaction
+                    return fetch('/Home/PaypalTransactionComplete', {
+                        method: 'post',
+                        headers: {
+                            'content-type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            orderID: data.orderID
+                        })
+                    });
+                });
+            }
+
+        }).render('#paypal-button-container-platinum');
+
+    </script>
+
+}
+
+
+<h2>Index</h2>
+
+<p>
+    @{
+        if (Session["user"] != null)
+        {
+            @Html.ActionLink("Create New Question", "Create", "Questions")
+            @: | 
+            @Html.ActionLink("My Questions", "MyQuestions")
+        }
+    }
+</p>
+
+<h4>Categories: </h4>
+@if (ViewBag.Categories != null)
+{
+    int cnt = 0;
+
+    foreach (var category in listOfCat)
+    {
+
+        <a style="margin-top:20px; margin-left: 10px; margin-bottom: 20px;" href="@Url.Action("Index", new { categoryId = category.Id })"
+           class="btn btn-default">
+            @category.CategoryName
+        </a>
+
+        if (cnt == 8)
+        {
+            cnt = 0;
+            @:</br>
+        }
+        else
+        {
+            cnt++;
+        }
+    }
+}
+
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Author.FirstName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Category.CategoryName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Title)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Text)
+        </th>
+        <th>
+            Number of answers
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Author.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Category.CategoryName)
+            </td>
+            <td>
+                @if (item.IsLocked)
+                {
+                <b>@Html.DisplayFor(modelItem => item.Title)</b>
+                }
+                else
+                {
+                    @Html.DisplayFor(modelItem => item.Title)
+                }
+
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Text)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Answers.Count)
+            </td>
+            <td>
+                @{
+                    if (Session["user"] != null)
+                    {
+                        if ((String)Session["email"] == item.Author.Email || (int)Session["role"] == 0)
+                        {
+                            @Html.ActionLink("Edit", "Edit", new { id = item.Id });
+                            @: |
+                        }
+
+                        if ((int)Session["role"] == 0 || (int)Session["userId"] == item.AuthorId)
+                        {
+                            @Html.ActionLink("Delete", "Delete", new { id = item.Id });
+                            @: |
+
+                            if (item.IsLocked)
+                            {
+                                @Html.ActionLink("Unlock", "UnlockQuestion", new { @id = item.Id });
+                                @: |
+                            }
+                            else
+                            {
+                                @Html.ActionLink("Lock", "LockQuestion", new { @id = item.Id });
+                                @: |
+                            }
+                        }
+
+                        if ((int)Session["role"] == 2)
+                        {
+                            if (item.IsLocked)
+                            {
+                                @Html.ActionLink("Unlock", "UnlockQuestion", new { @id = item.Id });
+                                @: |
+                            }
+                        }
+
+
+                    }
+
+                    @Html.ActionLink("Details", "Details", new { id = item.Id });
+                    
+                }
+            </td>
+        </tr>
+    }
+
+
+    @if (Session["user"] != null && (int)Session["role"] == 1)
+    {
+        <div class="row" style="padding-top:50px">
+            <div class="col-sm-4">
+                <span> Buy our silver package - @iepProject.PayPal.GetOrderClass.Silver  for @iepProject.PayPal.GetOrderClass.SilverPrice </span>
+                <div id="paypal-button-container-silver"></div>
+            </div>
+            <div class="col-sm-4">
+                <span> Buy our gold package - @iepProject.PayPal.GetOrderClass.Gold  for @iepProject.PayPal.GetOrderClass.GoldPrice</span>
+                <div id="paypal-button-container-gold"></div>
+            </div>
+            <div class="col-sm-4">
+                <span> Buy our platinum package- @iepProject.PayPal.GetOrderClass.Platinum  for @iepProject.PayPal.GetOrderClass.PlatinumPrice</span>
+                <div id="paypal-button-container-platinum"></div>
+            </div>
+        </div>
+    }
+
+</table>
+
+

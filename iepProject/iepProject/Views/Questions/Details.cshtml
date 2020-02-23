@@ -1,0 +1,196 @@
+﻿@model iepProject.Models.Question
+
+
+<!-- spot for defining data that is passed from controller -->
+@{
+    ViewBag.Title = "Details";
+    var answerList = ViewBag.answersList as List<iepProject.Models.Answer>;
+    var positiveAnswers = ViewBag.postiveAnswer as List<int>;
+    var negativeAnswrs = ViewBag.negatveAnswer as List<int>;
+    var posDictionary = ViewBag.posDictionary as Dictionary<int, int>;
+    var negDictionary = ViewBag.negDictionary as Dictionary<int, int>;
+    var replyMap = ViewBag.replyMap as Dictionary<int, List<iepProject.Models.Reply>>;
+}
+
+<h2>Details</h2>
+
+<button>@Html.ActionLink("Positive Grade", "SortAnswers", "Questions", new { sortCrit = 1, id = Model.Id }, null)</button>
+<button>@Html.ActionLink("Negative Grade", "SortAnswers", "Questions", new { sortCrit = 2, id = Model.Id }, null)</button>
+<button>@Html.ActionLink("Time", "SortAnswers", "Questions", new { sortCrit = 3, id = Model.Id }, null)</button>
+
+<div>
+
+   
+
+    <h4>Question</h4>
+    <p>
+        @if (!Model.IsLocked)
+        {
+            @Html.ActionLink("Add Answer", "../Answers/Create", new { id = Model.Id })
+        }
+
+    </p>
+
+    @if (Model.ImagePath != null)
+    {
+        <img src="@Url.Content(Model.ImagePath)" style="width:100%; height:100%" />
+    }
+
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Author.FirstName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Author.FirstName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Category.CategoryName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Category.CategoryName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Text)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Text)
+        </dd>
+
+
+        <dd>
+            @Html.DisplayFor(model => model.ImagePath)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IsLocked)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IsLocked)
+        </dd>
+
+    </dl>
+</div>
+
+<h1>Answers</h1>
+
+<table class="table">
+    <tr>
+        <th>
+            First Name
+        </th>
+        <th>
+            Text
+        </th>
+        <th>
+            PositiveCnt
+        </th>
+        <th>
+            NegativeCnt
+        </th>
+    </tr>
+
+    @foreach(var answer in answerList)
+    {
+<tr>
+    <td>
+        @answer.Author.FirstName
+    </td>
+    <td>
+        @answer.Text
+    </td>
+    <td>
+        @posDictionary[answer.Id]
+    </td>
+    <td>
+        @negDictionary[answer.Id]
+    </td>
+    <td>
+        @if (Session["user"] != null && answer.Question.AuthorId == (int)Session["userId"] && positiveAnswers != null)
+        {
+            if (positiveAnswers.Contains(answer.Id))
+            {
+                @Html.ActionLink("#", "Details", "Questions", new { id = answer.QuestionId })
+            }
+            else
+            {
+                @Html.ActionLink("Positive", "../Answers/AddPositiveGrade", new { isPositive = true, answerId = answer.Id, authorId = (int)Session["userId"] });
+            }
+        }
+
+    </td>
+    <td>
+        @if (Session["user"] != null && answer.Question.AuthorId == (int)Session["userId"] && negativeAnswrs != null)
+        {
+            if (negativeAnswrs.Contains(answer.Id))
+            {
+                @Html.ActionLink("#", "AddPositiveGrade", "Answers", new { id = answer.QuestionId })
+            }
+            else
+            {
+                @Html.ActionLink("Negative", "../Answers/AddNegativeGrade", new { isPositive = false, answerId = answer.Id, authorId = (int)Session["userId"] })
+            }
+        }
+    </td>
+    <td>
+        @if (Session["user"] != null)
+        {
+            @Html.ActionLink("Reply", "CreateReply", new { id = answer.Id })
+
+            if ((int)Session["role"] == 0)
+            {
+                @: |
+                @Html.ActionLink("Delete", "Delete", "Answers", new { id = answer.Id }, null)
+            }
+        }
+    </td>
+    
+
+<tr>
+    <th>
+    <td style="font-weight: bold;">Reply</td>
+    <td style="font-weight: bold;">FirstName</td>
+    <td style="font-weight: bold;">Text</td>
+    </th>
+</tr>
+    
+
+    @foreach(iepProject.Models.Reply reply in replyMap[answer.Id])
+    {
+        @:<tr><td style="border: none;"><td style="border: none;"></td><td>@reply.Author.FirstName</td><td>@reply.Text</td></tr>
+    }
+
+</tr>
+    }
+
+   
+</table>
+
+
+    <p>
+
+        @{
+            if ((String)Session["email"] == Model.Author.Email)
+            {
+                @Html.ActionLink("Edit", "Edit", new { id = Model.Id });
+            }
+        }
+
+
+
+        @Html.ActionLink("Back to List", "Index", "Home")
+    </p>

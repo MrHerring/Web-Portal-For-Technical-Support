@@ -1,0 +1,113 @@
+﻿@model iepProject.Models.ChatRoom
+
+@{
+    ViewBag.Title = "Details";
+
+    List<iepProject.Models.Message> chatMessagesList = null;
+
+    if (ViewBag.chatMessagesList != null)
+    {
+        chatMessagesList = ViewBag.chatMessagesList as List<iepProject.Models.Message>;
+    }
+
+    string username = (string)Session["username"];
+}
+
+
+
+
+
+
+
+
+
+
+
+
+<table class="table" id="msgTable">
+
+    @foreach (var item in chatMessagesList)
+    {
+        <tr>
+            <td>
+                Username: @Html.DisplayFor(modelItem => item.Creator.FirstName)
+            </td>
+            <td>
+                Message: @Html.DisplayFor(modelItem => item.Text)
+            </td>
+        </tr>
+    }
+
+
+
+</table>
+
+
+
+<input type="text" name="textOfMessage" id="textOfMessage" />
+<input type="button" id="btn" value="Send" />
+
+
+
+
+<h2>Details</h2>
+
+<div>
+    <h4>ChatRoom</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Creator.FirstName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Creator.FirstName)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
+
+
+@section scripts {
+
+    <script type="text/javascript" src="~/Scripts/jquery.signalR-2.4.1.js"></script>
+    <script type="text/javascript" src="~/signalR/hubs"></script>
+
+    <script>
+
+        var hub = $.connection.myHub;
+
+        //Javascript RPC function
+        hub.client.displayMessage = function (username, message) {
+            $('#msgTable').append('<tr><td>Username: ' + username + '</td><td>Message:' + message + '</td></td>');
+        }
+
+        var chatRoomId = JSON.parse('@Html.Raw(Json.Encode(Model.Id))')
+
+        $.connection.hub.start().done(function () {
+
+            //jointToAGroup : OnlySpotWhereItNeedsToConnect
+            hub.server.joinGroup(chatRoomId);
+
+
+
+            $('#btn').on('click', function () {
+
+
+                var username = '@username';
+                var chatRoomId = '@Model.Id';
+
+
+                hub.server.send(username, $('#textOfMessage').val(), chatRoomId, chatRoomId , @Session["userId"]);
+             })
+
+
+        });
+
+    </script>
+}
+

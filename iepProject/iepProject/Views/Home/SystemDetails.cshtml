@@ -1,0 +1,169 @@
+﻿
+@{
+    ViewBag.Title = "SystemDetails";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 align="center">System Details</h1>
+
+
+<div class="row">
+    <h2 align="center"> Token prices </h2>
+    <div class="col-sm-4" align="center">
+        <h3>Silver package</h3>
+
+        Silver package price: @ViewBag.SilverPrice
+        @using (Html.BeginForm("SetSilverPrice", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-horizontal">
+                <hr />
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <div class="form-group" align="center">
+                    New price for silver package: <br /><input type="text" name="NewPrice" />
+                </div>
+
+                <div class="form-group">
+                    <input type="submit" value="Submit" class="btn btn-default" />
+                </div>
+            </div>
+        }
+
+        Silver package tokens: @ViewBag.SilverTokens
+        @using (Html.BeginForm("SetSilverToken", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-horizontal">
+                <hr />
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <div class="form-group">
+                    New amount of tokens in a silver package: <input type="text" name="NewCount" />
+                </div>
+
+                <div class="form-group">
+                    <input type="submit" value="Submit" class="btn btn-default" />
+                </div>
+            </div>
+        }
+
+    </div>
+
+
+    <div class="col-sm-4" align="center">
+        <h3>Gold package</h3>
+
+        Gold package price: @ViewBag.GoldPrice
+        @using (Html.BeginForm("SetGoldPrice", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-horizontal">
+                <hr />
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <div class="form-group">
+                    New price for gold package:<br /> <input type="text" name="NewPrice" />
+                </div>
+
+                <div class="form-group">
+                    <input type="submit" value="Submit" class="btn btn-default" />
+                </div>
+            </div>
+        }
+
+        Gold package tokens: @ViewBag.GoldTokens
+        @using (Html.BeginForm("SetGoldToken", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-horizontal">
+                <hr />
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <div class="form-group">
+                    New amount of tokens in a gold package: <input type="text" name="NewCount" />
+                </div>
+
+                <div class="form-group">
+                    <input type="submit" value="Submit" class="btn btn-default" />
+                </div>
+            </div>
+        }
+
+    </div>
+
+
+    <div class="col-sm-4" align="center">
+        <h3>Platinum package</h3>
+
+        Platinum package price: @ViewBag.PlatinumPrice
+        @using (Html.BeginForm("SetPlatinumPrice", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-horizontal">
+                <hr />
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <div class="form-group">
+                    New price for platinum package:<br /> <input type="text" name="NewPrice" />
+                </div>
+
+                <div class="form-group">
+                    <input type="submit" value="Submit" class="btn btn-default" />
+                </div>
+            </div>
+        }
+
+        Platinum package tokens: @ViewBag.PlatinumTokens
+        @using (Html.BeginForm("SetPlatinumToken", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-horizontal">
+                <hr />
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <div class="form-group">
+                    New amount of tokens in a platinum package: <input type="text" name="NewCount" />
+                </div>
+
+                <div class="form-group">
+                    <input type="submit" value="Submit" class="btn btn-default" />
+                </div>
+            </div>
+        }
+
+    </div>
+
+</div>
+
+<div class="row">
+    <div class="col-sm-12" align="center">
+        <h2> Chat room price </h2>
+
+        Chat room price: @ViewBag.ChatRoomPrice
+        @using (Html.BeginForm("SetChatRoomPrice", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-horizontal">
+                <hr />
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <div class="form-group" align="center">
+                    New price for opening a chat room: <br /><input type="text" name="NewPrice" />
+                </div>
+
+                <div class="form-group">
+                    <input type="submit" value="Submit" class="btn btn-default" />
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="row" align="center">
+    <h2>Create a category</h2>
+
+    <button class="btn btn-default">@Html.ActionLink("Create category", "Create", "Categories")</button> 
+    </br>
+    <button class="btn btn-default" style="margin-top: 20px;">@Html.ActionLink("All Categories", "Index", "Categories")</button>
+</div>

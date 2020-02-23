@@ -1,0 +1,42 @@
+﻿@model iepProject.Models.Message
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Message</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.ChatRoom.Id)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ChatRoom.Id)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Creator.FirstName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Creator.FirstName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Text)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Text)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
